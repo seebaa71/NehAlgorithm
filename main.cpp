@@ -2,134 +2,11 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include "job.h"
+#include "functionsOfAlg.h"
 
 using namespace std;
 
-class Job {
-private:
-    int numbermachine = 0;
-    int numberproces = 0;
-    int valueofproces = 0;
-public:
-
-
-    void setnumbermachine(int number) {
-        numbermachine = number;
-    }
-
-    void setnumberproces(int number) {
-        numberproces = number;
-
-    }
-
-    void setvalueproces(int number) {
-        valueofproces = number;
-    }
-
-    int getnumbermachine() {
-        return numbermachine;
-    }
-
-    int getnumberproces() {
-        return numberproces;
-    }
-
-    int getvalue() {
-        return valueofproces;
-    }
-
-    friend ostream &operator<<(ostream &out, const Job object);
-
-    bool operator<(const Job &first) const {
-        return (valueofproces > first.valueofproces);
-    }
-
-};
-
-ostream &operator<<(ostream &out, Job object) {
-    out << "Numer maszyny to: " << object.getnumbermachine() << "Numer procesu to: " << object.getnumberproces()
-        << "Wartosc: " << object.getvalue();
-    return out;
-
-}
-
-void NehQue(vector<Job> tab, int np, int *tabhelp) {
-    Job example;
-    vector<Job> nehque;
-    int nmhelp = 1;
-
-    while (nmhelp != np + 1) {
-        int tmp = 0;
-        int valueproces = 0;
-        while (tmp != tab.size()) {
-            if (tab[tmp].getnumberproces() == nmhelp) {
-                valueproces = valueproces + tab[tmp].getvalue();
-            }
-            tmp++;
-        }
-        example.setvalueproces(valueproces);
-        example.setnumberproces(nmhelp);
-        nehque.push_back(example);
-        nmhelp++;
-
-    }
-    sort(nehque.begin(), nehque.end());
-    for (int i = 0; i < np; i++) {
-        tabhelp[i] = nehque[i].getnumberproces();
-    }
-
-}
-
-int NehAlgorithm(vector<Job> tab, int *tabhelp, int np, int nm) {
-    int timmachine[nm];
-    int Cmax1 = 0;
-    for (int i = 1; i < nm + 1; i++) {
-        timmachine[i] = 0;
-    }
-
-
-    for (int j = 0; j < np ;j++)
-    {
-        for (int i = 1; i < nm + 1; i++) {
-            int tmp = 0;
-            while ((tabhelp[j] != tab[tmp].getnumberproces()) || (i != tab[tmp].getnumbermachine())) {
-                tmp++;
-            }
-
-            if (i == 1 ) {
-                timmachine[i] = timmachine[i] + tab[tmp].getvalue();
-
-            } else {
-                if (timmachine[i - 1] >= timmachine[i] && j != 0) {
-                    timmachine[i] = timmachine[i] + (timmachine[i - 1] - timmachine[i]);
-                    timmachine[i] = timmachine[i] + tab[tmp].getvalue();
-
-                } else if (timmachine[i - 1] < timmachine[i] && j != 0) {
-                    timmachine[i] = timmachine[i] + tab[tmp].getvalue();
-
-
-                }
-                if (i == nm && j == 0) {
-                    for (int k = nm; k != 1; k--) {
-                        timmachine[k] = timmachine[k] + timmachine[k - 1];
-                    }
-                }
-            }
-            if (i == nm) {
-                Cmax1 = timmachine[i];
-            }
-
-
-        }
-    }
- /* for (int i = 1; i < nm+1 ; i++) {
-        cout << "Całkowity czas realizacji to: " << timmachine[i] << endl;
-    }*/
- // cout << "KONIEC" << endl;
-
-    return Cmax1;
-
-}
 
 int main() {
     Job object;
@@ -172,7 +49,7 @@ int main() {
         if (Cmaxhelp >= pom) {
               pom = NehAlgorithm(tab, tabpom, i, nm);
         Cmaxhelp = pom;
-           // Cmax = pom;
+
 
              for (int w = 0; w < i; w++) {
                  tabpom2[w] = tabpom[w];
@@ -190,10 +67,6 @@ int main() {
                 helpq = tabpom[r - 1];
                 tabpom[r - 1] = tabpom[r];
                 tabpom[r] = helpq;
-               /* for (int q = 0; q < i; q++) {
-                    cout << "Zmiana miejsc " << endl;
-                    cout << tabpom[q] << endl;
-                }*/
                 pom = NehAlgorithm(tab, tabpom, i, nm);
 
                 if (Cmaxhelp >= pom) {
@@ -216,7 +89,7 @@ int main() {
 
     }
 
-    cout << "Optymalny Cmax algorytmu NEH to: " << Cmax << endl;
+    cout << "The best CMAX value of NEH algorithm is: " << Cmax << endl;
 
     for(int i=0;i<np;i++)
     {
